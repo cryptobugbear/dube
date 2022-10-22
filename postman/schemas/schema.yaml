@@ -10,7 +10,7 @@ paths:
             summary: get a list of current formTemplate
             responses:
                 "200":
-                    description: List of all forms as per query 
+                    description: List of all forms as per query
                     content:
                         application/json:
                             schema:
@@ -103,7 +103,7 @@ paths:
             summary: get a list of current inventory
             responses:
                 "200":
-                    description: List of all inventories as per query 
+                    description: List of all inventories as per query
                     content:
                         application/json:
                             schema:
@@ -194,26 +194,36 @@ paths:
 
 components:
     schemas:
+        OrgId:
+            description: The unique identifier of a organization
+            type: string
         InventoryId:
-            description: The unique identifier of a inventory
+            description: The unique identifier of a inventory that is generated per inventory item
             type: string
         Inventory:
             type: object
             required:
                 - id
+                - orgId
                 - name
+                - image
+                - location
                 - type
             properties:
                 id:
                     $ref: "#/components/schemas/InventoryId"
+                orgId:
+                    $ref: "#/components/schemas/OrgId"
+                location:
+                    type: string
+                image:
+                    type: blob
                 name:
                     type: string
                 type:
                     type: string
                     enum:
-                        - electrical
-                        - furniture
-                        - plumbing
+                        - appliances
                 form:
                     type: object
                 audit:
@@ -221,45 +231,52 @@ components:
                 description:
                     type: string
         FormTemplateId:
-            description: The unique identifier of a form 
+            description: The unique identifier of a form
             type: string
-        FormTemplate: 
+        FormTemplate:
             type: object
             properties:
                 id:
                     $ref: "#/components/schemas/FormTemplateId"
-                form: 
+                form:
                     type: object
+                typeOfJob:
+                    type: string
+                    enum:
+                        - work
+                        - inventory
                 type:
                     type: string
                     enum:
-                        - work-electrical
-                        - work-furniture
-                        - work-plumbing
-                        - asset-electrical
-                        - asset-furniture
-                        - asset-electrical
+                        - appliances
                 audit:
                     $ref: "#/components/schemas/InventoryId"
         WorkOrderId:
-            description: The unique identifier of a work order 
+            description: The unique identifier of a work order
             type: string
-        WorkOrder: 
+        WorkOrder:
             type: object
             properties:
                 id:
                     $ref: "#/components/schemas/WorkOrderId"
-                form: 
+                orgId:
+                    $ref: "#/components/schemas/OrgId"
+                form:
                     type: object
+                inventoryId:
+                    $ref:  "#/components/schemas/InventoryId"
+                status:
+                    type: string
+                    enum:
+                        - open
+                        - closed
                 type:
                     type: string
                     enum:
-                        - electrical
-                        - furniture
-                        - plumbing
+                        - appliances
                 audit:
                     $ref: "#/components/schemas/InventoryId"
-        Audit: 
+        Audit:
             type: object
             required:
                 - createdBy
@@ -268,7 +285,7 @@ components:
                 createdBy:
                     type: string
                 createdDate:
-                    type: string 
+                    type: string
         Error:
             type: object
             required:
