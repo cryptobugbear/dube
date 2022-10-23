@@ -51,7 +51,8 @@ export class CDBService extends Construct {
 
     const dubeHandler = new NodejsFunction(this as any, "dubeHandler", {
       environment: {
-        DYNAMODB_TABLE: 'dube-assets'
+        DYNAMODB_TABLE_ASSETS: 'dube-assets',
+        DYNAMODB_TABLE_ORGS: 'dube-orgs'
       },
       entry: '/home/wizgot/my-projects/dube/lambdas/src/lambda.ts',
       handler: "handler",

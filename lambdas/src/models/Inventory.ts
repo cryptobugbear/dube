@@ -1,15 +1,15 @@
 import Audit from "./Audit"
 import Organization from "./Organization"
-
+import WorkOrder from "./WorkOrder";
 interface Inventory {
-  Id: string;
-  orgId: string;
+  id: string;
   name: string;
-  image: boolean;
+  imageS3: string;
   location: string;
   type: string;
   audit: Audit;
   organization: Organization;
+  workOrders: Array<WorkOrder>; 
 }
 
 export default Inventory;

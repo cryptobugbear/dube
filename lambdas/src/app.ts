@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import path from "path";
 import compression from "compression";
 import { getCurrentInvoke } from "@vendia/serverless-express";
-import postService from "./database/services";
+import {inventoryService, organizationService} from "./database/services";
 import Audit from "./models/Audit";
 import Organization from "./models/Organization";
 import Audit from "./models/Audit";
@@ -41,7 +41,7 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.get("/protected/inventory", async (req: Request, res: Response) => {
-    const posts = await postService.getAllInventorys();
+    const posts = await inventoryService.getAllInventorys();
     console.log("Fetching data from dynamo db - ", posts)
     return res.json(posts);
 });
@@ -61,30 +61,40 @@ router.get("/protected/inventory", async (req: Request, res: Response) => {
 router.post("/protected/inventory", async (req: Request, res: Response) => {
   try {
     // const inventoryId: string = uuid.v4();
-    const post = await postService.createInventory({
-      Id: "1",
-      orgId: "2",
-      name: "string",
-      image: true,
-      location: "sg",
-      type: "appliances",
-      audit: {
-        createdAt:"test",
-        createdBy:"test"
-      },
-      organization: {
-        Id:"1",
-        orgId:"2",
-        "name":"testorg"
-      },
-    });
+    const post = await inventoryService.createInventory(req.body);
+    //   {
+    //   id: "1",
+    //   orgId: "2",
+    //   name: "string",
+    //   image: true,
+    //   location: "sg",
+    //   type: "appliances",
+    //   audit: {
+    //     createdAt:"test",
+    //     createdBy:"test"
+    //   },
+    //   organization: {
+    //     Id:"1",
+    //     orgId:"2",
+    //     "name":"testorg"
+    //   },
+    // });
 
     return res.status(201).json(post);
   } catch (err) {
     return res.status(400).json(err);
   }
 });
+router.post("/protected/:inventoryId/workorder", async (req: Request, res: Response) => {
+  try {
+    // const inventoryId: string = uuid.v4();
+    const post = await inventoryService.createWorkOrder(req.params.inventoryId,req.body);
 
+    return res.status(201).json(post);
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+});
 // router.put("/users/:userId", (req: Request, res: Response) => {
 //   const user = getUser(req.params.userId);
 
@@ -102,30 +112,6 @@ router.post("/protected/inventory", async (req: Request, res: Response) => {
 //   users.splice(userIndex, 1);
 //   return res.json(users);
 // });
-
-// router.get("/cookie", (req: Request, res: Response) => {
-//   res.cookie("Foo", "bar");
-//   res.cookie("Fizz", "buzz");
-//   return res.json({});
-// });
-
-// const getUser = (userId: string) =>
-//   users.find((u) => u.id === parseInt(userId));
-
-// const getUserIndex = (userId: string) =>
-//   users.findIndex((u) => u.id === parseInt(userId));
-
-// // Ephemeral in-memory data store
-const users = [
-  {
-    id: 1,
-    name: "Joe",
-  },
-  {
-    id: 2,
-    name: "Jane",
-  },
-];
 
 // let userIdCounter = users.length;
 

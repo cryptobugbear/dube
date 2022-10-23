@@ -1,5 +1,6 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import Inventory from "../../models/Inventory";
+import WorkOrder from "../../models/WorkOrder";
 
 class InventoryService {
   constructor(
@@ -50,9 +51,31 @@ class InventoryService {
           "#image": "image",
         },
         ExpressionAttributeValues: {
-          ":image": partialPost.image,
+          ":image": partialPost.imageS3,
           ":name": partialPost.name,
           ":location": partialPost.location,
+          ":workorder": partialPost.workOrders,
+        },
+        ReturnValues: "ALL_NEW",
+      })
+      .promise();
+
+    return updated.Attributes as Inventory;
+  }
+
+  async createWorkOrder(inventoryId: string, partialPost: Partial<WorkOrder>): Promise<Inventory> {
+    const updated = await this.docClient
+      .update({
+        TableName: this.tableName,
+        Key: { inventoryId },
+        UpdateExpression:
+          "set #workOrders = list_append(if_not_exists(#workOrders, :empty_list), :partialPost)",
+        ExpressionAttributeNames: {
+          "#workOrders": "workOrders",
+        },
+        ExpressionAttributeValues: {
+          ":workOrders": [partialPost],
+          ":empty_list": []
         },
         ReturnValues: "ALL_NEW",
       })

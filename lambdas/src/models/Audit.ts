@@ -1,5 +1,6 @@
+import Member from "./Member"
 interface Audit {
-  createdBy: string;
+  createdBy: Member;
   createdAt: string;
 }
 
