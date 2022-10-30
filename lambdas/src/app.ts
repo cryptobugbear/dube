@@ -88,7 +88,8 @@ router.post("/protected/inventory", async (req: Request, res: Response) => {
 router.post("/protected/:inventoryId/workorder", async (req: Request, res: Response) => {
   try {
     // const inventoryId: string = uuid.v4();
-    const post = await inventoryService.createWorkOrder(req.params.inventoryId,req.body);
+    console.log("The partial order that s passed is - ", req.params.inventoryId, req.body)
+    const post = await inventoryService.createWorkOrder(req.params.inventoryId, req.body);
 
     return res.status(201).json(post);
   } catch (err) {

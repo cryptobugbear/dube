@@ -8,6 +8,7 @@ import * as apiGatewayAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers-al
 import * as apiGatewayIntegrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import { UserPoolClientIdentityProvider } from 'aws-cdk-lib/aws-cognito';
 
 export class CDBService extends Construct {
   constructor(scope: Construct, id: string) {
@@ -48,6 +49,14 @@ export class CDBService extends Construct {
     },
     generateSecret:true
     });
+    const callbackUrl = 'https://savearbo.xyz';
+    const googlePoolClient =  userPool.addClient('google-client', {
+      generateSecret: true,
+      supportedIdentityProviders: [UserPoolClientIdentityProvider.GOOGLE],
+      oAuth: {
+          callbackUrls: [callbackUrl],
+      },
+      });
 
     const dubeHandler = new NodejsFunction(this as any, "dubeHandler", {
       environment: {
@@ -75,7 +84,7 @@ export class CDBService extends Construct {
     //allow the lambda to read from dynamo db
     dubeHandler.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ['dynamodb:Scan','dynamodb:PutItem'],
+        actions: ['dynamodb:Scan','dynamodb:PutItem','dynamodb:UpdateItem'],
         resources: [table.tableArn]
       })
     );
@@ -86,7 +95,7 @@ export class CDBService extends Construct {
       'user-pool-authorizer',
       userPool,
       {
-        userPoolClients: [userPoolClient],
+        userPoolClients: [userPoolClient, googlePoolClient],
         identitySource: ['$request.header.Authorization'],
       },
     );
@@ -100,6 +109,13 @@ export class CDBService extends Construct {
       path: '/protected/inventory',
       authorizer,
     });
-
+    httpApi.addRoutes({
+      integration: new apiGatewayIntegrations.HttpLambdaIntegration(
+        'protected-fn-integration',
+        dubeHandler,
+      ),
+      path: '/protected/{inventoryId}/workorder',
+      authorizer,
+    });
   }
 }

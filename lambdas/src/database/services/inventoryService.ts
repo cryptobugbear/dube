@@ -44,7 +44,7 @@ class InventoryService {
     const updated = await this.docClient
       .update({
         TableName: this.tableName,
-        Key: { inventoryId },
+        Key: { "id": inventoryId },
         UpdateExpression:
           "set #image = :image, name = :name, location = :location",
         ExpressionAttributeNames: {
@@ -63,18 +63,18 @@ class InventoryService {
     return updated.Attributes as Inventory;
   }
 
-  async createWorkOrder(inventoryId: string, partialPost: Partial<WorkOrder>): Promise<Inventory> {
+  async createWorkOrder(inventoryId: string, partialWorkOrder: Partial<WorkOrder>): Promise<Inventory> {
     const updated = await this.docClient
       .update({
         TableName: this.tableName,
-        Key: { inventoryId },
+        Key: { "id": inventoryId },
         UpdateExpression:
-          "set #workOrders = list_append(if_not_exists(#workOrders, :empty_list), :partialPost)",
+          "set #workOrders = list_append(if_not_exists(#workOrders, :empty_list), :partialWorkOrder)",
         ExpressionAttributeNames: {
           "#workOrders": "workOrders",
         },
         ExpressionAttributeValues: {
-          ":workOrders": [partialPost],
+          ":partialWorkOrder": [partialWorkOrder],
           ":empty_list": []
         },
         ReturnValues: "ALL_NEW",
