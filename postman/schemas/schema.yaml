@@ -1,0 +1,303 @@
+openapi: "3.0.0"
+info:
+    version: "1.0.0"
+    title: "dube logistics"
+    description: Create and manage your appliances
+
+paths:
+    /formTemplate/:
+        get:
+            summary: get a list of current formTemplate
+            responses:
+                "200":
+                    description: List of all forms as per query
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FormTemplate"
+                404:
+                    description: No formTemplate found for the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+        post:
+            summary: Create a new formTemplate
+            responses:
+                "200":
+                    description: The formTemplate corresponding to the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FormTemplate"
+                404:
+                    description: No formTemplate found for the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /formTemplate/{formTemplateId}:
+        parameters:
+            - name: formTemplateId
+              description: The unique identifier of the formTemplate
+              in: path
+              required: true
+              schema:
+                  $ref: "#/components/schemas/FormTemplateId"
+        put:
+            summary: Update a specific formTemplate
+            responses:
+                "200":
+                    description: The formTemplate corresponding to the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FormTemplate"
+                404:
+                    description: No formTemplate found for the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+        get:
+            summary: Read an asset in the formTemplate
+            responses:
+                "200":
+                    description: The formTemplate corresponding to the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FormTemplate"
+                404:
+                    description: No FormTemplate found for the provided `formTemplateId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /inventory/:
+        get:
+            summary: get a list of current inventory
+            responses:
+                "200":
+                    description: List of all inventories as per query
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Inventory"
+                404:
+                    description: No inventory found for the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+        post:
+            summary: Create a new inventory
+            responses:
+                "200":
+                    description: The inventory corresponding to the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Inventory"
+                404:
+                    description: No inventory found for the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /inventory/{inventoryId}:
+        parameters:
+            - name: inventoryId
+              description: The unique identifier of the inventory
+              in: path
+              required: true
+              schema:
+                  $ref: "#/components/schemas/InventoryId"
+        put:
+            summary: Update a specific inventory
+            responses:
+                "200":
+                    description: The inventory corresponding to the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Inventory"
+                404:
+                    description: No inventory found for the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+        get:
+            summary: Read an asset in the inventory
+            responses:
+                "200":
+                    description: The inventory corresponding to the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Inventory"
+                404:
+                    description: No Inventory found for the provided `inventoryId`
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+components:
+    schemas:
+        OrgId:
+            description: The unique identifier of a organization
+            type: string
+        InventoryId:
+            description: The unique identifier of a inventory that is generated per inventory item
+            type: string
+        Inventory:
+            type: object
+            required:
+                - id
+                - orgId
+                - name
+                - image
+                - location
+                - type
+            properties:
+                id:
+                    $ref: "#/components/schemas/InventoryId"
+                orgId:
+                    $ref: "#/components/schemas/OrgId"
+                location:
+                    type: string
+                image:
+                    type: blob
+                name:
+                    type: string
+                type:
+                    type: string
+                    enum:
+                        - appliances
+                form:
+                    type: object
+                audit:
+                    $ref: "#/components/schemas/Audit"
+                description:
+                    type: string
+        FormTemplateId:
+            description: The unique identifier of a form
+            type: string
+        FormTemplate:
+            type: object
+            properties:
+                id:
+                    $ref: "#/components/schemas/FormTemplateId"
+                form:
+                    type: object
+                typeOfJob:
+                    type: string
+                    enum:
+                        - work
+                        - inventory
+                type:
+                    type: string
+                    enum:
+                        - appliances
+                audit:
+                    $ref: "#/components/schemas/InventoryId"
+        WorkOrderId:
+            description: The unique identifier of a work order
+            type: string
+        WorkOrder:
+            type: object
+            properties:
+                id:
+                    $ref: "#/components/schemas/WorkOrderId"
+                orgId:
+                    $ref: "#/components/schemas/OrgId"
+                form:
+                    type: object
+                inventoryId:
+                    $ref:  "#/components/schemas/InventoryId"
+                status:
+                    type: string
+                    enum:
+                        - open
+                        - closed
+                type:
+                    type: string
+                    enum:
+                        - appliances
+                audit:
+                    $ref: "#/components/schemas/InventoryId"
+        Audit:
+            type: object
+            required:
+                - createdBy
+                - createdDate
+            properties:
+                createdBy:
+                    type: string
+                createdDate:
+                    type: string
+        Error:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    description: A human readable error message
+                    type: string
+    securitySchemes:
+        ApiKey:
+            type: apiKey
+            in: header
+            name: X-Api-Key
+security:
+    - ApiKey: []
